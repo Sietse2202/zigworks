@@ -9,5 +9,8 @@
         "build.zig.zon",
         "src",
         "headers",
+        "LICENSE-APACHE",
+        "LICENSE-MIT",
+        "README.md",
     },
 }
