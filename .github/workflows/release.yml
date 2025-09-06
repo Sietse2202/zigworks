@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.14.1
+
+      - name: Build library (sanity check)
+        run: zig build
+
+      - name: Run tests
+        run: zig build test
+
+      - name: Create source archive
+        run: |
+          mkdir dist
+          git archive --format=tar.gz --prefix=${{ github.repository }}-${{ github.ref_name }}/ \
+            -o dist/${{ github.repository }}-${{ github.ref_name }}.tar.gz ${{ github.ref }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
