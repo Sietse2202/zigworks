@@ -1,5 +1,6 @@
 //! Zig bindings for the [NumWorks](https://github.com/numworks/epsilon) SDK
 
+/// The C header that the library wraps
 pub const internal = @cImport(
     @cInclude("eadk.h")
 );
