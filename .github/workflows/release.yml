@@ -25,6 +25,7 @@ jobs:
 
       - name: Create source archive
         run: |
+          mkdir dist
           mkdir dist/Sietse2202
           git archive --format=tar.gz --prefix=${{ github.repository }}-${{ github.ref_name }}/ \
             -o dist/${{ github.repository }}-${{ github.ref_name }}.tar.gz ${{ github.ref }}
