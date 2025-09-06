@@ -1,6 +1,6 @@
 .{
     .name = .eadk,
-    .version = "0.1.0",
+    .version = "1.0.0-rc.1",
     .fingerprint = 0xbf586f49208e512f,
     .minimum_zig_version = "0.14.1",
     .dependencies = .{},
