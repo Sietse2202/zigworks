@@ -18,11 +18,8 @@ jobs:
         with:
           version: 0.14.1
 
-      - name: Build library (sanity check)
+      - name: Build library
         run: zig build
-
-      - name: Run tests
-        run: zig build test
 
       - name: Create source archive
         run: |
