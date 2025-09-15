@@ -147,6 +147,11 @@ pub const Theme = struct {
     bg: Color,
     large: bool = false,
     centered: bool = false,
+
+    pub fn getTextSize(this: *const @This()) [2]u8 {
+        return if (this.large) [2]u8{ LARGE_FONT_WIDTH, LARGE_FONT_HEIGHT }
+            else [2]u8{ SMALL_FONT_WIDTH, SMALL_FONT_HEIGHT };
+    }
 };
 
 // Found these constants [here](https://github.com/numworks/epsilon/blob/master/kandinsky/include/kandinsky/font.h)
