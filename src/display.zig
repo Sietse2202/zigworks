@@ -24,6 +24,8 @@ pub const Color = packed struct(u16) {
         return .{ .r = r, .g = g, .b = b };
     }
 
+    
+
     /// Helper for converting from more standard formats
     pub fn fromRgb24(r: u8, g: u8, b: u8) Color {
         return Color{
@@ -31,6 +33,22 @@ pub const Color = packed struct(u16) {
             .g = @intCast(g >> 2),
             .b = @intCast(b >> 3),
         };
+    }
+    /// converts a RGB color unsigned integer to a color.
+    /// useful for hex colors.
+    /// Example:
+    /// ```
+    /// const c: Color = Color.fromRgb24Int(0xff0000);
+    ///                                     ^ any hex color!
+    /// ```
+    pub inline fn fromRgb24Int(color: u24) Color {
+        // __ __ BB
+        const b: u8 = @truncate(color);
+        // __ GG __
+        const g: u8 = @truncate(color >> 8);
+        // RR __ __
+        const r: u8 = @truncate(color >> 16);
+        return Color.fromRgb24(r, g, b);
     }
 
     /// Cast a u16 to a color
