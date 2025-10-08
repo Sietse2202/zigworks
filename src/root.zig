@@ -87,11 +87,17 @@ pub const random = struct {
     }
 };
 
+pub const MetaData = struct {
+    name: [:0]const u8,
+    api_level: u32 = 0,
+    icon: []const u8,
+};
+
 /// Convenience function for setting the required metadata in the final elf, if you don't use the symbols, zig will
 /// optimize them away, so be sure to do something like this:
 /// ```zig
 /// const embed = @embedFile("icon.nwi");
-/// const AppMetadata = eadk.setMetadata(embed.len, "Zig App", 0, embed.*);
+/// const AppMetadata = eadk.setMetadata("Zig App", 0, embed.*);
 ///
 /// // If you don't include this, the data gets optimized away, and your app won't link
 /// comptime {
@@ -101,16 +107,16 @@ pub const random = struct {
 /// }
 /// ```
 pub fn setMetadata(
-    N: comptime_int,
-    comptime name: []const u8,
-    comptime apiLevel: u32,
-    comptime icon: [N:0]u8,
+    comptime meta: MetaData,
 ) type {
-    return struct {
-        pub export const EADK_APP_NAME: [name.len + 1]u8 linksection(".rodata.eadk_app_name") =
-            (name ++ "\x00").*;
-        pub export const EADK_APP_API_LEVEL: u32 linksection(".rodata.eadk_api_level") = apiLevel;
-        pub export const EADK_APP_ICON: [icon.len]u8 linksection(".rodata.eadk_app_icon") =
-            icon;
-    };
+    comptime {
+        const array_icon: [meta.icon.len]u8 = meta.icon[0..meta.icon.len].*;
+
+        return struct {
+            pub export const eadk_app_name: [meta.name.len:0]u8 linksection(".rodata.eadk_app_name") = meta.name;
+            pub export const eadk_app_api_level: u32 linksection(".rodata.eadk_api_level") = meta.api_level;
+            pub export const eadk_app_icon: [meta.icon.len]u8 linksection(".rodata.eadk_app_icon") =
+                array_icon;
+        };
+    }
 }

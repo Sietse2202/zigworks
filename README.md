@@ -11,5 +11,12 @@ const eadk = b.dependency("zigworks", .{});
 obj.root_module.addImport("eadk", eadk.module("eadk"));
 ```
 
+and then in your build.zig, add these lines:
+```zig
+const eadk = b.dependency("zigworks", .{});
+<obj>.root_module.addImport("eadk", eadk.module("eadk"));
+```
+where obj is your output exe/object
+
 ## License
 This project is dual licensed under [Apache-2.0](LICENSE-APACHE) and [MIT](LICENSE-MIT) at your wish.
