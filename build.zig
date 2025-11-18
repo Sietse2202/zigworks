@@ -11,5 +11,6 @@ pub fn build(b: *std.Build) void {
         .single_threaded = true,
     });
 
-    eadk_mod.addIncludePath(b.path("headers"));
+    eadk_mod.addCSourceFile(.{ .file = b.path("src/storage.c") });
+    eadk_mod.addIncludePath(b.path("src"));
 }
