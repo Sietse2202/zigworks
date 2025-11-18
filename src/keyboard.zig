@@ -1,6 +1,6 @@
 //! Keyboard/input module for zigworks, allows for checking if keys are pressed.
 
-const eadk = @import("root.zig").internal;
+const eadk = @import("root.zig").eadk_internal;
 
 pub const Key = enum(u8) {
     left = 0,
@@ -14,7 +14,7 @@ pub const Key = enum(u8) {
     shift = 12,
     alpha = 13,
     xnt = 14,
-    var_ = 15,
+    @"var" = 15,
     toolbox = 16,
     backspace = 17,
     exp = 18,
@@ -54,20 +54,56 @@ pub const Key = enum(u8) {
 pub const KeyboardState = struct {
     state: u64,
 
-    pub fn isKeyDown(this: *const @This(), key: Key) bool {
-        return eadk.eadk_keyboard_key_down(this.state,@intFromEnum(key));
+    const Self = @This();
+
+    pub fn isKeyDown(self: *const Self, key: Key) bool {
+        return eadk.eadk_keyboard_key_down(self.state, @intFromEnum(key));
     }
 
-    pub fn areAllKeysDown(this: *const @This(), keys: []const Key) bool {
-        for (keys) |key| {
-            if (!this.isKeyDown(key)) {
+    pub fn areAllKeysDown(self: *const Self, keys: []const Key) bool {
+        for (keys) |key|
+            if (!self.isKeyDown(key))
                 return false;
-            }
-        }
 
         return true;
     }
+
+    pub fn areAnyKeysDown(self: *const Self, keys: []const Key) bool {
+        for (keys) |key|
+            if (self.isKeyDown(key))
+                return true;
+
+        return false;
+    }
 };
+
+pub fn waitUntilPressed(key: Key) void {
+    var current_scan = scan();
+    while (!current_scan.isKeyDown(key))
+        current_scan = scan();
+}
+
+pub fn waitUntilAnyPressed(keys: []const Key) void {
+    var current_scan = scan();
+    while (!current_scan.areAnyKeysDown(keys))
+        current_scan = scan();
+}
+
+pub fn waitUntilReleased(key: Key) void {
+    var current_scan = scan();
+    while (current_scan.isKeyDown(key))
+        current_scan = scan();
+}
+
+pub fn waitUntilAllReleased(keys: []const Key) void {
+    var current_scan = scan();
+    while (true) {
+        current_scan = scan();
+
+        if (!current_scan.areAnyKeysDown(keys))
+            break;
+    }
+}
 
 pub fn scan() KeyboardState {
     return .{ .state = eadk.eadk_keyboard_scan() };
