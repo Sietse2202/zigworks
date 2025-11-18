@@ -1,0 +1,13 @@
+pub extern fn extapp_fileList(filename: [*c][*c]const u8, maxrecord: c_int, extension: [*c]const u8) c_int;
+pub extern fn extapp_fileListWithExtension(filename: [*c][*c]const u8, maxrecord: c_int, extension: [*c]const u8) c_int;
+pub extern fn extapp_fileExists(filename: [*c]const u8) bool;
+pub extern fn extapp_fileRead(filename: [*c]const u8, len: [*c]usize) [*c]const u8;
+pub extern fn extapp_fileWrite(filename: [*c]const u8, content: [*c]const u8, len: usize) bool;
+pub extern fn extapp_fileErase(filename: [*c]const u8) bool;
+pub extern fn extapp_size(...) u32;
+pub extern fn extapp_address(...) u32;
+pub extern fn extapp_used(...) u32;
+pub extern fn extapp_nextFree(...) [*c]const u32;
+pub extern fn extapp_isValid(address: [*c]const u32) bool;
+pub extern fn extapp_calculatorModel(...) u8;
+pub extern fn extapp_userlandAddress(...) u32;
