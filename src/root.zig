@@ -23,6 +23,9 @@ pub const timing = struct {
         return eadk_internal.eadk_timing_millis();
     }
 };
+
+pub const heap = @import("heap.zig");
+
 /// This module appears to be broken and is thus deprecated, but is kept in for consistency with the C Header
 pub const battery = struct {
     /// Is the calculator charging or not (deprecated)
