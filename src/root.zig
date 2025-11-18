@@ -87,6 +87,18 @@ pub const random = struct {
     }
 };
 
+pub const model = struct {
+    pub const CalculatorModel = enum(u2) {
+        Unknown = 0,
+        @"N0110/N0115" = 1,
+        N0120 = 2,
+    };
+
+    const asU2: u2 = @truncate(extppp_internal.extapp_calculatorModel());
+    pub const calculator_model: CalculatorModel = @enumFromInt(asU2);
+    pub const userland_address: u32 = extppp_internal.extapp_userlandAddress();
+};
+
 pub const MetaData = struct {
     name: [:0]const u8,
     api_level: u32 = 0,
