@@ -3,36 +3,52 @@ name: Release
 on:
   push:
     tags:
-      - "v*.*.*"
-      - "v*.*.*-*"
-      - "v*.*.*-*-*"
+      - "v*"
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install Zig
-        uses: goto-bus-stop/setup-zig@v2
+      - uses: mlugg/setup-zig@v2
         with:
-          version: 0.14.1
+          version: 0.15.2
 
       - name: Build library
         run: zig build
 
+      - name: Build docs
+        run: zig build docs
+
       - name: Create source archive
         run: |
-          mkdir dist
-          mkdir dist/Sietse2202
-          git archive --format=tar.gz --prefix=${{ github.repository }}-${{ github.ref_name }}/ \
-            -o dist/${{ github.repository }}-${{ github.ref_name }}.tar.gz ${{ github.ref }}
+          git archive \
+            --format=tar.gz \
+            --prefix=${{ github.ref_name }}/ \
+            -o ${{ github.ref_name }}.tar.gz \
+            ${{ github.ref }}
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          files: dist/*
+          files: ${{ github.ref_name }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: zig-out/docs
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
+        
