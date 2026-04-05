@@ -1,6 +1,6 @@
 //! Keyboard/input module for zigworks, allows for checking if keys are pressed.
 
-const eadk = @import("root.zig").eadk_internal;
+const eadk_internal = @import("eadk_internal.zig");
 
 pub const Key = enum(u8) {
     left = 0,

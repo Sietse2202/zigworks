@@ -1,6 +1,6 @@
 //! Display module for zigworks, includes bindings for drawing to the screen, and other related things.
 
-const eadk = @import("root").eadk_internal;
+const eadk_internal = @import("eadk_internal.zig");
 const std = @import("std");
 
 /// Rgb565 color

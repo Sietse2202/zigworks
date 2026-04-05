@@ -1,4 +1,4 @@
-const eadk_internal = @import("root");
+const eadk_internal = @import("eadk_internal.zig");
 const std = @import("std");
 
 inline fn randomU32() u32 {

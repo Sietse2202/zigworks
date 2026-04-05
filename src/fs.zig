@@ -1,5 +1,5 @@
 const std = @import("std");
-const CalculatorModel = @import("root").CalculatorModel;
+const CalculatorModel = @import("eadk_internal.zig").CalculatorModel;
 
 fn readU32At(addr: usize) u32 {
     return @as(*const u32, @ptrFromInt(addr)).*;
