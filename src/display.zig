@@ -102,12 +102,12 @@ pub const Rect = extern struct {
     /// }
     /// ```
     pub fn pushPixelsUnchecked(self: *const Self, pixels: []const Color) void {
-        eadk.eadk_display_push_rect(@bitCast(self.*), @ptrCast(pixels.ptr));
+        eadk_internal.eadk_display_push_rect(@bitCast(self.*), @ptrCast(pixels.ptr));
     }
 
     /// Fills the area of `self` with `color`
     pub fn pushColor(self: *const Self, color: Color) void {
-        eadk.eadk_display_push_rect_uniform(@bitCast(self.*), @bitCast(color));
+        eadk_internal.eadk_display_push_rect_uniform(@bitCast(self.*), @bitCast(color));
     }
 
     /// Get the colors of the pixels in `self`, and write them to the given buffer.
@@ -121,7 +121,7 @@ pub const Rect = extern struct {
 
     /// Get the colors of the pixels in `self`, and write them to the given buffer.
     pub fn pullPixelsUnchecked(self: *const Self, pixels: []Color) void {
-        eadk.eadk_display_pull_rect(@bitCast(self.*), @ptrCast(pixels.ptr));
+        eadk_internal.eadk_display_pull_rect(@bitCast(self.*), @ptrCast(pixels.ptr));
     }
 
     // Get the center of `self` as a point.
@@ -145,12 +145,12 @@ pub const Rect = extern struct {
 
 /// Fill the entire screen with `color`
 pub fn clearScreen(color: Color) void {
-    eadk.eadk_display_push_rect_uniform(@bitCast(Rect.full_screen), @bitCast(color));
+    eadk_internal.eadk_display_push_rect_uniform(@bitCast(Rect.full_screen), @bitCast(color));
 }
 
 /// Wait for v-blank, prevents tearing, at the cost of framerate.
 pub fn waitForVblank() bool {
-    return eadk.eadk_display_wait_for_vblank();
+    return eadk_internal.eadk_display_wait_for_vblank();
 }
 
 /// 2D point on the screen.
@@ -188,7 +188,7 @@ pub const Point = struct {
             point.x -= @intCast(width / 2);
         }
 
-        eadk.eadk_display_draw_string(
+        eadk_internal.eadk_display_draw_string(
             text,
             .{ .x = point.x, .y = point.y },
             options.large,
@@ -224,10 +224,10 @@ pub const large_font_height: u8 = 18;
 
 /// Set the brightness of the backlight, non-persistent.
 pub fn setBacklightBrightness(brightness: u8) void {
-    eadk.eadk_backlight_set_brightness(brightness);
+    eadk_internal.eadk_backlight_set_brightness(brightness);
 }
 
 /// Get the brightness of the backlight
 pub fn getBacklightBrightness() u8 {
-    return eadk.eadk_backlight_brightness();
+    return eadk_internal.eadk_backlight_brightness();
 }
