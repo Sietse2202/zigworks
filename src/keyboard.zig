@@ -56,6 +56,10 @@ pub const KeyboardState = struct {
 
     const Self = @This();
 
+    pub fn scan() KeyboardState {
+        return .{ .state = eadk.eadk_keyboard_scan() };
+    }
+
     pub fn isKeyDown(self: *const Self, key: Key) bool {
         return eadk.eadk_keyboard_key_down(self.state, @intFromEnum(key));
     }
@@ -78,33 +82,29 @@ pub const KeyboardState = struct {
 };
 
 pub fn waitUntilPressed(key: Key) void {
-    var current_scan = scan();
+    var current_scan: KeyboardState = .scan();
     while (!current_scan.isKeyDown(key))
-        current_scan = scan();
+        current_scan = .scan();
 }
 
 pub fn waitUntilAnyPressed(keys: []const Key) void {
-    var current_scan = scan();
+    var current_scan: KeyboardState = .scan();
     while (!current_scan.areAnyKeysDown(keys))
-        current_scan = scan();
+        current_scan = .scan();
 }
 
 pub fn waitUntilReleased(key: Key) void {
-    var current_scan = scan();
+    var current_scan: KeyboardState = .scan();
     while (current_scan.isKeyDown(key))
-        current_scan = scan();
+        current_scan = .scan();
 }
 
 pub fn waitUntilAllReleased(keys: []const Key) void {
-    var current_scan = scan();
+    var current_scan: KeyboardState = .scan();
     while (true) {
-        current_scan = scan();
+        current_scan = .scan();
 
         if (!current_scan.areAnyKeysDown(keys))
             break;
     }
-}
-
-pub fn scan() KeyboardState {
-    return .{ .state = eadk.eadk_keyboard_scan() };
 }
