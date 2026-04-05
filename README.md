@@ -3,7 +3,7 @@ Zig bindings for [eadk.h](https://github.com/numworks/epsilon/blob/master/eadk/i
 
 ## How to use
 ```sh
-$ zig fetch --save=zigworks https://github.com/Sietse2202/zigworks/archive/refs/tags/v1.0.0-rc.1.tar.gz
+$ zig fetch --save=zigworks https://github.com/Sietse2202/zigworks/archive/refs/tags/v2.0.0.tar.gz
 ```
 
 and then in your `build.zig`, add these two lines:
