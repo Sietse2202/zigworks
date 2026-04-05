@@ -57,11 +57,11 @@ pub const KeyboardState = struct {
     const Self = @This();
 
     pub fn scan() KeyboardState {
-        return .{ .state = eadk.eadk_keyboard_scan() };
+        return .{ .state = eadk_internal.eadk_keyboard_scan() };
     }
 
     pub fn isKeyDown(self: *const Self, key: Key) bool {
-        return eadk.eadk_keyboard_key_down(self.state, @intFromEnum(key));
+        return eadk_internal.eadk_keyboard_key_down(self.state, @intFromEnum(key));
     }
 
     pub fn areAllKeysDown(self: *const Self, keys: []const Key) bool {
