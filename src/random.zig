@@ -31,7 +31,7 @@ pub fn randomInRange(comptime T: type, min: T, max: T) T {
     if (n == 0) return min;
 
     const max_val = std.math.maxInt(Unsigned);
-    const threshold: Unsigned = (max_val +% 1) % n;
+    const threshold: Unsigned = (max_val -% n +% 1) % n;
 
     var x: Unsigned = @bitCast(randomInt(T));
     while (x < threshold) {
