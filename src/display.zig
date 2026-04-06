@@ -39,6 +39,15 @@ pub const Color = packed struct(u16) {
     }
 };
 
+test Color {
+    const assert = std.debug.assert;
+
+    const red_decl: Color = .red;
+    const red_hex: Color = .fromRgb24Int(0xFF0000);
+
+    try assert(red_decl == red_hex);
+}
+
 /// Width of the screen in pixels
 pub const screen_width: u16 = 320;
 /// Height of the screen in pixels
@@ -143,6 +152,10 @@ pub const Rect = extern struct {
     }
 };
 
+test Rect {
+    _ = Rect;
+}
+
 /// Fill the entire screen with `color`
 pub fn clearScreen(color: Color) void {
     eadk_internal.eadk_display_push_rect_uniform(@bitCast(Rect.full_screen), @bitCast(color));
@@ -198,6 +211,10 @@ pub const Point = struct {
     }
 };
 
+test Point {
+    _ = Point;
+}
+
 /// Helper struct for displaying text
 pub const Theme = struct {
     fg: Color,
@@ -211,6 +228,10 @@ pub const Theme = struct {
         return if (self.large) [2]u8{ large_font_width, large_font_height } else [2]u8{ small_font_width, small_font_height };
     }
 };
+
+test Theme {
+    _ = Theme;
+}
 
 // Found these constants [here](https://github.com/numworks/epsilon/blob/master/kandinsky/include/kandinsky/font.h)
 /// Width of the small text in pixels

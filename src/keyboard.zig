@@ -81,6 +81,13 @@ pub const KeyboardState = struct {
     }
 };
 
+test KeyboardState {
+    const assert = @import("std").debug.assert;
+
+    const state: KeyboardState = .{ .state = 0b1000 };
+    try assert(state.isKeyDown(.right));
+}
+
 pub fn waitUntilPressed(key: Key) void {
     var current_scan: KeyboardState = .scan();
     while (!current_scan.isKeyDown(key))
