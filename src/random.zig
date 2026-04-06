@@ -16,7 +16,7 @@ pub fn randomInt(comptime T: type) T {
     const raw: Unsigned = if (bits == 32)
         randomU32()
     else
-        @truncate(randomU32() >> (32 - bits));
+        @truncate(randomU32());
 
     return @bitCast(raw);
 }
@@ -26,26 +26,24 @@ pub fn randomInRange(comptime T: type, min: T, max: T) T {
     if (info != .int) @compileError("randomInRange only supports integer types");
 
     const Unsigned = std.meta.Int(.unsigned, @bitSizeOf(T));
+
+    const n: Unsigned = @as(Unsigned, @bitCast(max)) -% @as(Unsigned, @bitCast(min)) +% 1;
+    if (n == 0) return min;
+
     const max_val = std.math.maxInt(Unsigned);
+    const threshold: Unsigned = (max_val +% 1) % n;
 
-    const n: Unsigned = @bitCast(max - min + 1);
-    if (n == 0) return min; // n wrapped, meaning the full range was requested
-
-    const rem = max_val % n;
     var x: Unsigned = @bitCast(randomInt(T));
-
-    var safety: usize = 1000;
-    while (x > max_val - rem - 1) : (safety -= 1) {
-        if (safety == 0) break; // RNG appears broken, bail out
+    while (x < threshold) {
         x = @bitCast(randomInt(T));
     }
 
-    return min + @as(T, @bitCast(x % n));
+    return min +% @as(T, @bitCast(x % n));
 }
 
 pub fn randomFloat(comptime T: type) T {
     if (@typeInfo(T) != .float) @compileError("randomFloat only supports float types");
-    return @as(T, @floatFromInt(randomU32())) / @as(T, @floatFromInt(std.math.maxInt(u32)));
+    return @as(T, @floatFromInt(randomU32())) / (@as(T, @floatFromInt(std.math.maxInt(u32))) + 1.0);
 }
 
 pub fn randomBool() bool {
@@ -53,6 +51,7 @@ pub fn randomBool() bool {
 }
 
 pub fn shuffle(comptime T: type, slice: []T) void {
+    if (slice.len > std.math.maxInt(u32) + 1) @panic("slice too large for 32-bit RNG");
     var i: usize = slice.len;
     while (i > 1) {
         i -= 1;
