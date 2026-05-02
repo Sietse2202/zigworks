@@ -1,8 +1,6 @@
-//! Keyboard/input module for zigworks, allows for checking if keys are pressed.
+const syscall = @import("syscall.zig");
 
-const eadk_internal = @import("eadk_internal.zig");
-
-pub const Key = enum(u8) {
+pub const Key = enum(u6) {
     left = 0,
     up = 1,
     down = 2,
@@ -51,17 +49,17 @@ pub const Key = enum(u8) {
     exe = 52,
 };
 
-pub const KeyboardState = struct {
+pub const KeyboardState = packed struct(u64) {
     state: u64,
 
     const Self = @This();
 
     pub fn scan() KeyboardState {
-        return .{ .state = eadk_internal.eadk_keyboard_scan() };
+        return .{ .state = syscall.svc0r64(.keyboard_scan) };
     }
 
     pub fn isKeyDown(self: *const Self, key: Key) bool {
-        return eadk_internal.eadk_keyboard_key_down(self.state, @intFromEnum(key));
+        return (self.state >> key) & 1 != 0;
     }
 
     pub fn areAllKeysDown(self: *const Self, keys: []const Key) bool {
@@ -82,10 +80,10 @@ pub const KeyboardState = struct {
 };
 
 test KeyboardState {
-    const assert = @import("std").debug.assert;
+    const std = @import("std");
 
     const state: KeyboardState = .{ .state = 0b1000 };
-    try assert(state.isKeyDown(.right));
+    try std.testing.expect(state.isKeyDown(.right));
 }
 
 pub fn waitUntilPressed(key: Key) void {

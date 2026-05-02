@@ -1,5 +1,5 @@
 const std = @import("std");
-const CalculatorModel = @import("eadk_internal.zig").CalculatorModel;
+const CalculatorModel = @import("root.zig").CalculatorModel;
 
 fn readU32At(addr: usize) u32 {
     return @as(*const u32, @ptrFromInt(addr)).*;
@@ -106,24 +106,24 @@ pub fn listFilesWithExtension(
     return buffer[0..count];
 }
 
-pub fn readFile(model: CalculatorModel, filename: []const u8) error{ReadFile}![]const u8 {
+pub fn readFile(model: CalculatorModel, filename: []const u8) ?[]const u8 {
     var iter = RecordIterator.init(model) orelse return error.ReadFile;
     while (iter.next()) |record| {
         if (std.mem.eql(u8, record.name, filename)) return record.content;
     }
-    return error.ReadFile;
+    return null;
 }
 
-pub fn writeToFile(model: CalculatorModel, filename: []const u8, content: []const u8) error{WriteFile}!void {
+pub fn writeToFile(model: CalculatorModel, filename: []const u8, content: []const u8) error{ OutOfStorage, FileTooLarge }!void {
     const free_addr = nextFree(model) orelse
-        return error.WriteFile;
+        return error.OutOfStorage;
 
     const total_size: u16 = std.math.cast(u16, 2 + filename.len + 1 + content.len) orelse
-        return error.WriteFile;
+        return error.FileTooLarge;
     const storage_end = storageAddress(model) + storageSize(model);
 
     if (free_addr + total_size > storage_end)
-        return error.WriteFile;
+        return error.OutOfStorage;
 
     @as(*u16, @ptrFromInt(free_addr)).* = total_size;
     const name_dest: [*]u8 = @ptrFromInt(free_addr + 2);
@@ -136,11 +136,11 @@ pub fn writeToFile(model: CalculatorModel, filename: []const u8, content: []cons
     @memset(zero_start[0 .. storage_end - (free_addr + total_size)], 0);
 }
 
-pub fn eraseFile(model: CalculatorModel, filename: []const u8) error{EraseFile}!void {
-    if (!isValid(model)) return error.EraseFile;
+pub fn eraseFile(model: CalculatorModel, filename: []const u8) error{ InvalidModel, UnknownModel }!void {
+    if (!isValid(model)) return error.UnknownModel;
 
     var iter = RecordIterator.init(model) orelse
-        return error.EraseFile;
+        return error.InvalidModel;
 
     const addr = while (iter.next()) |record| {
         if (std.mem.eql(u8, record.name, filename))
@@ -148,7 +148,7 @@ pub fn eraseFile(model: CalculatorModel, filename: []const u8) error{EraseFile}!
     } else return error.EraseFile;
 
     const record_size = readU16At(addr);
-    const free_addr = nextFree(model) orelse return error.EraseFile;
+    const free_addr = nextFree(model) orelse unreachable;
 
     std.mem.copyForwards(
         u8,

@@ -1,8 +1,8 @@
-const eadk_internal = @import("eadk_internal.zig");
 const std = @import("std");
+const syscall = @import("syscall.zig");
 
 inline fn randomU32() u32 {
-    return eadk_internal.eadk_random();
+    return syscall.svc0r(.random);
 }
 
 pub fn randomInt(comptime T: type) T {
