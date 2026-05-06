@@ -91,7 +91,7 @@ pub const CalculatorModel = enum(u2) {
     }
 };
 
-pub const AppMetadata = struct {
+pub const AppMetadata = extern struct {
     name: [:0]const u8,
     app_icon: []const u8,
     api_level: u32 = 0,
