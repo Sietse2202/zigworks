@@ -124,11 +124,34 @@ fn exportMain() void {
         else => @compileError("`main` must be a function"),
     }
 
-    const exportee = struct {
-        pub fn exportee() callconv(.c) void {
-            main();
+    const _start = struct {
+        pub fn _start() callconv(.naked) noreturn {
+            asm volatile (
+                \\   ldr  r2, =_data_section_start_ram
+                \\   ldr  r3, =_data_section_end_ram
+                \\   ldr  r1, =_data_section_start_flash
+                \\   subs r3, r3, r2
+                \\ .copy_loop:
+                \\   subs r3, r3, #1
+                \\   bcs  .do_copy
+                \\   ldr  r2, =_bss_section_start_ram
+                \\   movs r1, #0
+                \\   ldr  r3, =_bss_section_end_ram
+                \\   subs r3, r3, r2
+                \\ .bss_loop:
+                \\   subs r3, r3, #1
+                \\   bcs  .do_zero
+                \\   b    main
+                \\ .do_copy:
+                \\   ldrb r0, [r1], #1
+                \\   strb r0, [r2], #1
+                \\   b    .copy_loop
+                \\ .do_zero:
+                \\   strb r1, [r2], #1
+                \\   b    .bss_loop
+            );
         }
-    }.exportee;
+    }._start;
 
-    @export(&exportee, .{ .linkage = .strong, .name = "main" });
+    @export(&_start, .{ .linkage = .strong, .name = "_start" });
 }
