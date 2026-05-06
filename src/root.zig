@@ -91,7 +91,7 @@ pub const CalculatorModel = enum(u2) {
     }
 };
 
-pub const AppMetadata = extern struct {
+pub const AppMetadata = struct {
     name: [:0]const u8,
     app_icon: []const u8,
     api_level: u32 = 0,
@@ -103,8 +103,10 @@ pub fn init(comptime metadata: AppMetadata) void {
     const name_as_array: *const [metadata.name.len:0]u8 = metadata.name[0..];
     const icon_as_array: *const [metadata.app_icon.len]u8 = metadata.app_icon[0..];
 
+    const new_api_level: u32 = metadata.api_level;
+
     @export(name_as_array, .{ .linkage = .strong, .section = ".rodata", .name = "eadk_app_name" });
-    @export(&metadata.api_level, .{ .linkage = .strong, .section = ".rodata", .name = "eadk_api_level" });
+    @export(&new_api_level, .{ .linkage = .strong, .section = ".rodata", .name = "eadk_api_level" });
     @export(icon_as_array, .{ .linkage = .strong, .section = ".rodata", .name = "eadk_app_icon" });
 }
 
