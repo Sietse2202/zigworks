@@ -128,5 +128,5 @@ fn exportMain() void {
         }
     }.exportee;
 
-    @export(exportee, .{ .linkage = .strong, .name = "main" });
+    @export(&exportee, .{ .linkage = .strong, .name = "main" });
 }
