@@ -103,9 +103,9 @@ pub fn init(comptime metadata: AppMetadata) void {
     const name_as_array: *const [metadata.name.len:0]u8 = metadata.name[0..];
     const icon_as_array: *const [metadata.app_icon.len]u8 = metadata.app_icon[0..];
 
-    @export(name_as_array, .{ .linkage = .strong, .section = ".rodata.eadk_app_name" });
-    @export(&metadata.api_level, .{ .linkage = .strong, .section = ".rodata.eadk_api_level" });
-    @export(icon_as_array, .{ .linkage = .strong, .section = ".rodata.eadk_app_icon" });
+    @export(name_as_array, .{ .linkage = .strong, .section = ".rodata", .name = "eadk_app_name" });
+    @export(&metadata.api_level, .{ .linkage = .strong, .section = ".rodata", .name = "eadk_api_level" });
+    @export(icon_as_array, .{ .linkage = .strong, .section = ".rodata", .name = "eadk_app_icon" });
 }
 
 fn exportMain() void {
