@@ -154,4 +154,6 @@ fn exportMain() void {
     }._start;
 
     @export(&_start, .{ .linkage = .strong, .name = "_start" });
+    // To be safe
+    @export(&_start, .{ .linkage = .strong, .name = "_eadk_start" });
 }
