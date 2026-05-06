@@ -69,28 +69,28 @@ pub const EpsilonSyscall = enum(u8) {
 };
 
 pub inline fn svc0(comptime syscall: EpsilonSyscall) void {
-    asm volatile (syscall.toAsm() ::: "memory");
+    asm volatile (syscall.toAsm());
 }
 
 pub inline fn svc0r(comptime syscall: EpsilonSyscall) u32 {
     return asm volatile (syscall.toAsm()
         : [ret] "={r0}" (-> u32),
         :
-        : "memory");
+        : .{ .r0 = true });
 }
 
 pub inline fn svc1(comptime syscall: EpsilonSyscall, a: u32) void {
     asm volatile (syscall.toAsm()
         :
         : [a] "{r0}" (a),
-        : "memory");
+    );
 }
 
 pub inline fn svc1r(comptime syscall: EpsilonSyscall, a: u32) u32 {
     return asm volatile (syscall.toAsm()
         : [ret] "={r0}" (-> u32),
         : [a] "{r0}" (a),
-        : "memory");
+        : .{ .r0 = true });
 }
 
 pub inline fn svc2(comptime syscall: EpsilonSyscall, a: u32, b: u32) void {
@@ -98,7 +98,7 @@ pub inline fn svc2(comptime syscall: EpsilonSyscall, a: u32, b: u32) void {
         :
         : [a] "{r0}" (a),
           [b] "{r1}" (b),
-        : "memory");
+    );
 }
 
 pub inline fn svc3(comptime syscall: EpsilonSyscall, a: u32, b: u32, c: u32) void {
@@ -107,19 +107,19 @@ pub inline fn svc3(comptime syscall: EpsilonSyscall, a: u32, b: u32, c: u32) voi
         : [a] "{r0}" (a),
           [b] "{r1}" (b),
           [c] "{r2}" (c),
-        : "memory");
+    );
 }
 
 pub inline fn svc0r64(comptime syscall: EpsilonSyscall) u64 {
     return asm volatile (syscall.toAsm()
         : [ret] "=r" (-> u64),
         :
-        : "memory");
+        : .{ .r0 = true, .r1 = true });
 }
 
 pub inline fn svc0s(comptime syscall: EpsilonSyscall) f32 {
     return asm volatile (syscall.toAsm()
         : [ret] "={s0}" (-> f32),
         :
-        : "memory");
+        : .{ .s0 = true });
 }
